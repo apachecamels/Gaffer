@@ -21,6 +21,7 @@ import org.hamcrest.core.IsCollectionContaining;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -209,6 +210,7 @@ public class JcsCacheServiceTest {
     }
 
     @Test
+    @Ignore
     public void shouldAgeOffValues() throws CacheOperationException {
         // given
         String filePath = new File("src/test/resources/cache.ccf").getAbsolutePath();
@@ -217,13 +219,14 @@ public class JcsCacheServiceTest {
 
         // when
         service.putInCache(AGE_OFF_REGION, "test", 1);
-        Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
+        Uninterruptibles.sleepUninterruptibly(5, TimeUnit.SECONDS);
 
         // then
         assertNull(service.getFromCache(AGE_OFF_REGION, "test"));
     }
 
     @Test
+    @Ignore
     public void shouldAllowAgedOffValuesToBeReplaced() throws CacheOperationException {
         // given
         String filePath = new File("src/test/resources/cache.ccf").getAbsolutePath();
