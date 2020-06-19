@@ -17,10 +17,9 @@ package uk.gov.gchq.gaffer.integration;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 
 import uk.gov.gchq.gaffer.commonutil.CollectionUtil;
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
@@ -69,7 +68,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Logic/config for setting up and running store integration tests.
@@ -123,12 +122,10 @@ public abstract class AbstractStoreIT {
     protected Map<EdgeId, Edge> edges;
     private List<Edge> duplicateEdges;
 
-    protected final Map<String, User> userMap = new HashMap<>();
+    protected static final Map<String, User> userMap = new HashMap<>();
     protected static Graph graph;
     protected User user = new User();
 
-    @Rule
-    public TestName name = new TestName();
     private static Map<? extends Class<? extends AbstractStoreIT>, String> skippedTests;
     private static Map<? extends Class<? extends AbstractStoreIT>, Map<String, String>> skipTestMethods;
     protected String originalMethodName;
@@ -169,9 +166,9 @@ public abstract class AbstractStoreIT {
      *
      * @throws Exception should never be thrown
      */
-    @Before
-    public void setup() throws Exception {
-        initialise();
+    @BeforeEach
+    public void setup(TestInfo testInfo) throws Exception {
+        initialise(testInfo);
         validateTest();
         createGraph();
         _setup();
@@ -182,33 +179,35 @@ public abstract class AbstractStoreIT {
         // Override if required;
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @AfterEach
+    public void tearDown() {
         graph = null;
     }
 
-    protected void initialise() throws Exception {
+    protected void initialise(TestInfo testInfo) throws Exception {
         entities = createEntities();
         duplicateEntities = duplicate(entities.values());
 
         edges = createEdges();
         duplicateEdges = duplicate(edges.values());
 
-        originalMethodName = name.getMethodName().endsWith("]")
-                ? name.getMethodName().substring(0, name.getMethodName().indexOf("["))
-                : name.getMethodName();
+        originalMethodName = testInfo.getDisplayName().endsWith(")")
+                ? testInfo.getDisplayName().substring(0, testInfo.getDisplayName().indexOf("("))
+                : testInfo.getDisplayName();
+
+        System.out.println("*** Name: " + originalMethodName);
 
         method = this.getClass().getMethod(originalMethodName);
     }
 
     protected void validateTest() throws Exception {
-        assumeTrue("Skipping test as no store properties have been defined.", null != storeProperties);
-        assumeTrue("Skipping test as only " + singleTestMethod + " is being run.", null == singleTestMethod || singleTestMethod.equals(originalMethodName));
-        assumeTrue("Skipping test. Justification: " + skippedTests.get(getClass()), !skippedTests.containsKey(getClass()));
+        assumeTrue(null != storeProperties, "Skipping test as no store properties have been defined.");
+        assumeTrue(null == singleTestMethod || singleTestMethod.equals(originalMethodName), "Skipping test as only " + singleTestMethod + " is being run.");
+        assumeTrue(!skippedTests.containsKey(getClass()), "Skipping test. Justification: " + skippedTests.get(getClass()));
 
         final Map<String, String> skippedMethods = skipTestMethods.get(getClass());
         if (null != skippedMethods && !skippedMethods.isEmpty()) {
-            assumeTrue("Skipping test. Justification: " + skippedMethods.get(method.getName()), !skippedMethods.containsKey(originalMethodName));
+            assumeTrue(!skippedMethods.containsKey(originalMethodName), "Skipping test. Justification: " + skippedMethods.get(method.getName()));
         }
     }
 
@@ -222,7 +221,7 @@ public abstract class AbstractStoreIT {
         }
 
         for (final StoreTrait requiredTrait : requiredTraits) {
-            assumeTrue("Skipping test as the store does not implement all required traits.", graph.hasTrait(requiredTrait));
+            assumeTrue(graph.hasTrait(requiredTrait), "Skipping test as the store does not implement all required traits.");
         }
     }
 

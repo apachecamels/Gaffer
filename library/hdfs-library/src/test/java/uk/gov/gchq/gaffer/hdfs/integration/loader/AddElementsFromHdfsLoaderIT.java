@@ -19,13 +19,12 @@ package uk.gov.gchq.gaffer.hdfs.integration.loader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.gov.gchq.gaffer.commonutil.CommonTestConstants;
 import uk.gov.gchq.gaffer.commonutil.StringUtil;
 import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.hdfs.operation.AddElementsFromHdfs;
@@ -39,18 +38,19 @@ import uk.gov.gchq.gaffer.store.schema.TestSchema;
 import uk.gov.gchq.gaffer.user.User;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Map;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AddElementsFromHdfsLoaderIT extends ParameterizedLoaderIT<AddElementsFromHdfs> {
-    @Rule
-    public final TemporaryFolder testFolder = new TemporaryFolder(CommonTestConstants.TMP_DIRECTORY);
+    @TempDir
+    public File testFolder;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AddElementsFromHdfsLoaderIT.class);
 
@@ -74,7 +74,7 @@ public class AddElementsFromHdfsLoaderIT extends ParameterizedLoaderIT<AddElemen
 
         final String root = fs.resolvePath(new Path("/")).toString()
                 .replaceFirst("/$", "")
-                + testFolder.getRoot().getAbsolutePath();
+                + testFolder.getAbsolutePath();
 
 
         LOGGER.info("using root dir: " + root);
@@ -92,7 +92,7 @@ public class AddElementsFromHdfsLoaderIT extends ParameterizedLoaderIT<AddElemen
     }
 
     @Test
-    public void shouldThrowExceptionWhenAddElementsFromHdfsWhenFailureDirectoryContainsFiles() throws Exception {
+    public void shouldThrowExceptionWhenAddElementsFromHdfsWhenFailureDirectoryContainsFiles(TestInfo testInfo) throws Exception {
         tearDown();
         fs.mkdirs(new Path(failureDir));
         try (final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fs.create(new Path(failureDir + "/someFile.txt"), true)))) {
@@ -100,7 +100,7 @@ public class AddElementsFromHdfsLoaderIT extends ParameterizedLoaderIT<AddElemen
         }
 
         try {
-            setup();
+            setup(testInfo);
             fail("Exception expected");
         } catch (final OperationException e) {
             assertEquals("Failure directory is not empty: " + failureDir, e.getCause().getMessage());
@@ -110,21 +110,21 @@ public class AddElementsFromHdfsLoaderIT extends ParameterizedLoaderIT<AddElemen
     }
 
     @Test
-    public void shouldAddElementsFromHdfsWhenDirectoriesAlreadyExist() throws Exception {
+    public void shouldAddElementsFromHdfsWhenDirectoriesAlreadyExist(TestInfo testInfo) throws Exception {
         // Given
         tearDown();
         fs.mkdirs(new Path(outputDir));
         fs.mkdirs(new Path(failureDir));
 
         // When
-        setup();
+        setup(testInfo);
 
         // Then
         shouldGetAllElements();
     }
 
     @Test
-    public void shouldThrowExceptionWhenAddElementsFromHdfsWhenOutputDirectoryContainsFiles() throws Exception {
+    public void shouldThrowExceptionWhenAddElementsFromHdfsWhenOutputDirectoryContainsFiles(TestInfo testInfo) throws Exception {
         // Given
         tearDown();
         fs.mkdirs(new Path(outputDir));
@@ -134,10 +134,10 @@ public class AddElementsFromHdfsLoaderIT extends ParameterizedLoaderIT<AddElemen
 
         // When
         try {
-            setup();
+            setup(testInfo);
             fail("Exception expected");
         } catch (final Exception e) {
-            assertTrue(e.getMessage(), e.getMessage().contains("Output directory exists and is not empty: " + outputDir));
+            assertTrue(e.getMessage().contains("Output directory exists and is not empty: " + outputDir), e.getMessage());
         } finally {
             tearDown();
         }

@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.integration.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
 import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
@@ -50,10 +50,10 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.store.TestTypes.DIRECTED_EITHER;
 
 public class VisibilityIT extends AbstractStoreIT {
@@ -93,8 +93,8 @@ public class VisibilityIT extends AbstractStoreIT {
         for (final Element e : results) {
 
             // Check that all visible entities contain the visibility property
-            assertTrue("Visibility property should be visible.", e.getProperties()
-                    .containsKey(TestTypes.VISIBILITY));
+            assertTrue(e.getProperties()
+                                .containsKey(TestTypes.VISIBILITY), "Visibility property should be visible.");
 
             assertThat("Visibility property should contain an empty String.", e.getProperties()
                     .get(TestTypes.VISIBILITY)
@@ -131,8 +131,8 @@ public class VisibilityIT extends AbstractStoreIT {
         for (final Element e : results) {
 
             // Check that all visible entities do not contain the visibility property
-            assertFalse("Visibility property should not be visible.", e.getProperties()
-                    .containsKey(TestTypes.VISIBILITY));
+            assertFalse(e.getProperties()
+                                .containsKey(TestTypes.VISIBILITY), "Visibility property should not be visible.");
         }
 
         iterable.close();
@@ -166,8 +166,8 @@ public class VisibilityIT extends AbstractStoreIT {
         for (final Element e : results) {
 
             // Check that all visible entities contain the visibility property
-            assertTrue("Visibility property should be visible.", e.getProperties()
-                    .containsKey(TestTypes.VISIBILITY));
+            assertTrue(e.getProperties()
+                                .containsKey(TestTypes.VISIBILITY), "Visibility property should be visible.");
 
             assertThat("Visibility property should contain an empty String.", e.getProperties()
                     .get(TestTypes.VISIBILITY)
@@ -204,8 +204,8 @@ public class VisibilityIT extends AbstractStoreIT {
         for (final Element e : results) {
 
             // Check that all visible entities contain the visibility property
-            assertTrue("Visibility property should be visible.", e.getProperties()
-                    .containsKey(TestTypes.VISIBILITY));
+            assertTrue(e.getProperties()
+                                .containsKey(TestTypes.VISIBILITY), "Visibility property should be visible.");
 
             assertThat("Visibility property should contain an empty String.", e.getProperties()
                     .get(TestTypes.VISIBILITY)
@@ -247,8 +247,8 @@ public class VisibilityIT extends AbstractStoreIT {
 
         for (final Element e : userVis1Results) {
             // Check that all visible entities contain the visibility property
-            assertTrue("Missing visibility property.", e.getProperties()
-                    .containsKey(TestTypes.VISIBILITY));
+            assertTrue(e.getProperties()
+                                .containsKey(TestTypes.VISIBILITY), "Missing visibility property.");
 
             // Check that the visibility key contai
             // ns the correct value

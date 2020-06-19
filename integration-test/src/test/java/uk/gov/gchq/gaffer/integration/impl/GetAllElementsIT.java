@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.integration.impl;
 
 import com.google.common.collect.Lists;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
 import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
@@ -57,9 +57,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetAllElementsIT extends AbstractStoreIT {
     @Override
@@ -285,11 +285,11 @@ public class GetAllElementsIT extends AbstractStoreIT {
             final ElementId seed = ElementSeed.createSeed(result);
             if (result instanceof Entity) {
                 Entity entity = (Entity) result;
-                assertTrue("Entity was not expected: " + entity, expectedElements.contains(entity));
+                assertTrue(expectedElements.contains(entity), "Entity was not expected: " + entity);
             } else {
                 Edge edge = (Edge) result;
                 if (edge.isDirected()) {
-                    assertTrue("Edge was not expected: " + edge, expectedElements.contains(edge));
+                    assertTrue(expectedElements.contains(edge), "Edge was not expected: " + edge);
                 } else {
                     final Edge edgeReversed = new Edge.Builder()
                             .group(TestGroups.EDGE)
@@ -298,14 +298,15 @@ public class GetAllElementsIT extends AbstractStoreIT {
                             .directed(edge.isDirected())
                             .build();
                     expectedElementsCopy.remove(edgeReversed);
-                    assertTrue("Edge was not expected: " + seed, expectedElements.contains(result) || expectedElements.contains(edgeReversed));
+                    assertTrue(expectedElements.contains(result) || expectedElements.contains(edgeReversed), "Edge was not expected: " + seed);
                 }
             }
             expectedElementsCopy.remove(result);
         }
 
-        assertEquals("The number of elements returned was not as expected. Missing elements: " + expectedElementsCopy, expectedElements.size(),
-                Lists.newArrayList(results).size());
+        assertEquals(expectedElements.size(),
+                Lists.newArrayList(results).size(),
+                "The number of elements returned was not as expected. Missing elements: " + expectedElementsCopy);
     }
 
     @Test

@@ -18,8 +18,8 @@ package uk.gov.gchq.gaffer.integration.impl;
 
 import com.google.common.collect.Lists;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
 
 import uk.gov.gchq.gaffer.cache.CacheServiceLoader;
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
@@ -47,8 +47,8 @@ import uk.gov.gchq.koryphe.impl.predicate.IsIn;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GraphHooksIT extends AbstractStoreIT {
     @Override
@@ -56,8 +56,8 @@ public class GraphHooksIT extends AbstractStoreIT {
         addDefaultElements();
     }
 
-    @After
-    public void cleanUp() {
+    @AfterAll
+    public static void cleanUp() {
         CacheServiceLoader.shutdown();
     }
 

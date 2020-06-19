@@ -16,8 +16,9 @@
 package uk.gov.gchq.gaffer.federatedstore.integration;
 
 import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +50,8 @@ import uk.gov.gchq.koryphe.impl.predicate.IsEqual;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FederatedStoreRecursionIT extends AbstractStoreIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(FederatedStore.class);
@@ -62,7 +63,7 @@ public class FederatedStoreRecursionIT extends AbstractStoreIT {
     public static final String PROPERTY_NAME = "count";
     private Graph proxyToRestServiceFederatedGraph;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         graph.execute(new RemoveGraph.Builder()
                 .graphId(PublicAccessPredefinedFederatedStore.ACCUMULO_GRAPH_WITH_EDGES)
@@ -75,7 +76,8 @@ public class FederatedStoreRecursionIT extends AbstractStoreIT {
     }
 
 
-    @Test(timeout = 60000)
+    @Test
+    @Timeout(60)
     public void shouldNotInfinityLoopWhenAddingElements() throws Exception {
         /*
          * Structure:
@@ -121,7 +123,7 @@ public class FederatedStoreRecursionIT extends AbstractStoreIT {
                 new GetAllElements.Builder()
                         .build(),
                 user));
-        assertEquals(elements.toString(), 1, elements.size());
+        assertEquals(1, elements.size(), elements.toString());
         assertEquals(expected, elements.get(0).getProperties().get(PROPERTY_NAME));
     }
 
@@ -154,7 +156,7 @@ public class FederatedStoreRecursionIT extends AbstractStoreIT {
                 user));
         assertEquals(ids.length, list.size());
         for (String id : ids) {
-            assertTrue(list.toString(), list.contains(id));
+            assertTrue(list.contains(id), list.toString());
         }
     }
 
@@ -162,7 +164,7 @@ public class FederatedStoreRecursionIT extends AbstractStoreIT {
         ArrayList<? extends String> list = Lists.newArrayList(proxyToRestServiceFederatedGraph.execute(new GetAllGraphIds(), user));
         assertEquals(ids.length, list.size());
         for (String id : ids) {
-            assertTrue(list.toString(), list.contains(id));
+            assertTrue(list.contains(id), list.toString());
         }
     }
 

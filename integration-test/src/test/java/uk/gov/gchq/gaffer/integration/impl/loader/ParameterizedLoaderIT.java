@@ -17,14 +17,14 @@
 package uk.gov.gchq.gaffer.integration.impl.loader;
 
 import com.google.common.collect.Sets;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Entity;
 import uk.gov.gchq.gaffer.data.element.id.EdgeId;
 import uk.gov.gchq.gaffer.data.element.id.EntityId;
+import uk.gov.gchq.gaffer.integration.impl.loader.resolvers.SchemaLoaderParameterResolver;
+import uk.gov.gchq.gaffer.integration.impl.loader.resolvers.TestSchemaParameterResolver;
 import uk.gov.gchq.gaffer.integration.impl.loader.schemas.AggregationSchemaLoader;
 import uk.gov.gchq.gaffer.integration.impl.loader.schemas.BasicSchemaLoader;
 import uk.gov.gchq.gaffer.integration.impl.loader.schemas.FullSchemaLoader;
@@ -36,9 +36,10 @@ import uk.gov.gchq.gaffer.store.schema.TestSchema;
 import uk.gov.gchq.gaffer.user.User;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static uk.gov.gchq.gaffer.store.schema.TestSchema.AGGREGATION_SCHEMA;
 import static uk.gov.gchq.gaffer.store.schema.TestSchema.BASIC_SCHEMA;
@@ -58,24 +59,26 @@ import static uk.gov.gchq.gaffer.store.schema.TestSchema.VISIBILITY_SCHEMA;
  *
  * @param <T> the type of the {@link Operation} being tested
  */
-@RunWith(Parameterized.class)
+@ExtendWith({TestSchemaParameterResolver.class, SchemaLoaderParameterResolver.class})
 public abstract class ParameterizedLoaderIT<T extends Operation> extends AbstractLoaderIT<T> {
     private static final User DEFAULT_USER = new User("privileged", Sets.newHashSet("public", "private"));
 
-    private final Schema schema;
-    private final SchemaLoader loader;
+    private static Schema schema;
+    private static SchemaLoader loader;
 
-    @Parameters(name = "{index}: {0}")
-    public static Collection<Object[]> instancesToTest() {
+    private static Stream<Object[]> instancesToTest() {
         final Map<String, User> userMap = new HashMap<>();
         userMap.put("basic", new User("basic", Sets.newHashSet("public")));
         userMap.put("privileged", new User("privileged", Sets.newHashSet("public", "private")));
-        return Arrays.asList(new Object[][]{
+
+        final List<Object[]> objects = Arrays.asList(new Object[][] {
                 {FULL_SCHEMA, new FullSchemaLoader(), userMap},
                 {VISIBILITY_SCHEMA, new VisibilitySchemaLoader(), userMap},
                 {AGGREGATION_SCHEMA, new AggregationSchemaLoader(), userMap},
                 {BASIC_SCHEMA, new BasicSchemaLoader(), userMap}
         });
+
+        return objects.stream();
     }
 
     public ParameterizedLoaderIT(final TestSchema schema, final SchemaLoader loader, final Map<String, User> userMap) {

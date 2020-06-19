@@ -17,7 +17,7 @@
 package uk.gov.gchq.gaffer.integration.impl;
 
 import com.google.common.collect.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
 import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
@@ -73,9 +73,9 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetWalksIT extends AbstractStoreIT {
     final EntitySeed seedA = new EntitySeed("A");
@@ -297,7 +297,7 @@ public class GetWalksIT extends AbstractStoreIT {
         try {
             Lists.newArrayList(graph.execute(op, getUser()));
         } catch (final Exception e) {
-            assertTrue(e.getMessage(), e.getMessage().contains("must contain a single hop"));
+            assertTrue(e.getMessage().contains("must contain a single hop"), e.getMessage());
         }
     }
 
