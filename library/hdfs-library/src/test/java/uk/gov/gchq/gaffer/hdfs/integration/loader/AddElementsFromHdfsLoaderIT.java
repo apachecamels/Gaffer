@@ -21,6 +21,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,41 +93,41 @@ public class AddElementsFromHdfsLoaderIT extends ParameterizedLoaderIT<AddElemen
     }
 
     @Test
-    public void shouldThrowExceptionWhenAddElementsFromHdfsWhenFailureDirectoryContainsFiles() throws Exception {
-        tearDown();
+    public void shouldThrowExceptionWhenAddElementsFromHdfsWhenFailureDirectoryContainsFiles(TestInfo testInfo) throws Exception {
+        tearDownAll();
         fs.mkdirs(new Path(failureDir));
         try (final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fs.create(new Path(failureDir + "/someFile.txt"), true)))) {
             writer.write("Some content");
         }
 
         try {
-            setup();
+            setup(testInfo);
             fail("Exception expected");
         } catch (final OperationException e) {
             assertEquals("Failure directory is not empty: " + failureDir, e.getCause().getMessage());
         } finally {
-            tearDown();
+            tearDownAll();
         }
     }
 
     @Test
-    public void shouldAddElementsFromHdfsWhenDirectoriesAlreadyExist() throws Exception {
+    public void shouldAddElementsFromHdfsWhenDirectoriesAlreadyExist(TestInfo testInfo) throws Exception {
         // Given
-        tearDown();
+        tearDownAll();
         fs.mkdirs(new Path(outputDir));
         fs.mkdirs(new Path(failureDir));
 
         // When
-        setup();
+        setup(testInfo);
 
         // Then
         shouldGetAllElements();
     }
 
     @Test
-    public void shouldThrowExceptionWhenAddElementsFromHdfsWhenOutputDirectoryContainsFiles() throws Exception {
+    public void shouldThrowExceptionWhenAddElementsFromHdfsWhenOutputDirectoryContainsFiles(TestInfo testInfo) throws Exception {
         // Given
-        tearDown();
+        tearDownAll();
         fs.mkdirs(new Path(outputDir));
         try (final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fs.create(new Path(outputDir + "/someFile.txt"), true)))) {
             writer.write("Some content");
@@ -134,12 +135,12 @@ public class AddElementsFromHdfsLoaderIT extends ParameterizedLoaderIT<AddElemen
 
         // When
         try {
-            setup();
+            setup(testInfo);
             fail("Exception expected");
         } catch (final Exception e) {
             assertTrue(e.getMessage(), e.getMessage().contains("Output directory exists and is not empty: " + outputDir));
         } finally {
-            tearDown();
+            tearDownAll();
         }
     }
 

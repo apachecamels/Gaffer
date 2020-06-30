@@ -18,7 +18,8 @@ package uk.gov.gchq.gaffer.integration.impl;
 
 import com.google.common.collect.Lists;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
 import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
@@ -62,6 +63,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class GetAllElementsIT extends AbstractStoreIT {
+
+    @BeforeEach
     @Override
     public void _setup() throws Exception {
         addDefaultElements();

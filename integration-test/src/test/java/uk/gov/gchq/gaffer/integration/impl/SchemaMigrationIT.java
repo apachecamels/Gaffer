@@ -16,7 +16,8 @@
 
 package uk.gov.gchq.gaffer.integration.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.data.element.Edge;
 import uk.gov.gchq.gaffer.data.element.Element;
@@ -327,6 +328,7 @@ public class SchemaMigrationIT extends AbstractStoreIT {
 
     private SchemaMigration migration;
 
+    @BeforeEach
     @Override
     public void _setup() throws Exception {
         addExtraElements();
@@ -334,32 +336,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
 
     //--- Output NEW ---
 
-    @TraitRequirement(StoreTrait.TRANSFORMATION)
     @Test
-    public void shouldMigrateOldToNew() throws OperationException {
-        migration.setOutputType(SchemaMigration.MigrationOutputType.NEW);
-
-        // When
-        final Iterable<? extends Element> results = graph.execute(
-                new GetElements.Builder()
-                        .input("oldVertex", "newVertex")
-                        .view(OLD_VIEW)
-                        .build(),
-                new User());
-
-        // Then
-        ElementUtil.assertElementEquals(
-                Arrays.asList(
-                        ENTITY_OLD_MIGRATED_TO_NEW,
-                        ENTITY_NEW,
-                        EDGE_OLD_MIGRATED_TO_NEW,
-                        EDGE_NEW
-                ),
-                results);
-    }
-
     @TraitRequirement(StoreTrait.TRANSFORMATION)
-    @Test
     public void shouldMigrateNewToNew() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.NEW);
 
@@ -382,8 +360,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
                 results);
     }
 
-    @TraitRequirement(StoreTrait.TRANSFORMATION)
     @Test
+    @TraitRequirement(StoreTrait.TRANSFORMATION)
     public void shouldMigrateOldAndNewToNew() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.NEW);
 
@@ -406,10 +384,33 @@ public class SchemaMigrationIT extends AbstractStoreIT {
                 results);
     }
 
-    //--- Output OLD ---
-
-    @TraitRequirement(StoreTrait.TRANSFORMATION)
     @Test
+    @TraitRequirement(StoreTrait.TRANSFORMATION)
+    public void shouldMigrateOldToNew() throws OperationException {
+        migration.setOutputType(SchemaMigration.MigrationOutputType.NEW);
+
+        // When
+        final Iterable<? extends Element> results = graph.execute(
+                new GetElements.Builder()
+                        .input("oldVertex", "newVertex")
+                        .view(OLD_VIEW)
+                        .build(),
+                new User());
+
+        // Then
+        ElementUtil.assertElementEquals(
+                Arrays.asList(
+                        ENTITY_OLD_MIGRATED_TO_NEW,
+                        ENTITY_NEW,
+                        EDGE_OLD_MIGRATED_TO_NEW,
+                        EDGE_NEW
+                ),
+                results);
+    }
+
+    //--- Output OLD ---
+    @Test
+    @TraitRequirement(StoreTrait.TRANSFORMATION)
     public void shouldMigrateOldToOld() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.OLD);
 
@@ -432,8 +433,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
                 results);
     }
 
-    @TraitRequirement(StoreTrait.TRANSFORMATION)
     @Test
+    @TraitRequirement(StoreTrait.TRANSFORMATION)
     public void shouldMigrateNewToOld() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.OLD);
 
@@ -456,8 +457,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
                 results);
     }
 
-    @TraitRequirement(StoreTrait.TRANSFORMATION)
     @Test
+    @TraitRequirement(StoreTrait.TRANSFORMATION)
     public void shouldMigrateOldAndNewToOld() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.OLD);
 
@@ -480,8 +481,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
                 results);
     }
 
-    @TraitRequirement({StoreTrait.TRANSFORMATION, StoreTrait.QUERY_AGGREGATION})
     @Test
+    @TraitRequirement({StoreTrait.TRANSFORMATION, StoreTrait.QUERY_AGGREGATION})
     public void shouldMigrateOldToNewWithAgg() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.NEW);
 
@@ -501,8 +502,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
                 results);
     }
 
-    @TraitRequirement(StoreTrait.TRANSFORMATION)
     @Test
+    @TraitRequirement(StoreTrait.TRANSFORMATION)
     public void shouldCorrectlyApplyPostAggFiltering() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.NEW);
 
@@ -523,8 +524,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
         );
     }
 
-    @TraitRequirement(StoreTrait.TRANSFORMATION)
     @Test
+    @TraitRequirement(StoreTrait.TRANSFORMATION)
     public void shouldApplyPostOpAggregation() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.NEW);
 
@@ -562,8 +563,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
                 resultsWithPostOpAgg);
     }
 
-    @TraitRequirement(StoreTrait.TRANSFORMATION)
     @Test
+    @TraitRequirement(StoreTrait.TRANSFORMATION)
     public void shouldAggBeforePostFilters() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.OLD);
         migration.setAggregateAfter(true);
@@ -585,8 +586,8 @@ public class SchemaMigrationIT extends AbstractStoreIT {
         );
     }
 
-    @TraitRequirement({StoreTrait.TRANSFORMATION, StoreTrait.POST_TRANSFORMATION_FILTERING})
     @Test
+    @TraitRequirement({StoreTrait.TRANSFORMATION, StoreTrait.POST_TRANSFORMATION_FILTERING})
     public void shouldAddOperationsAfterEachGetElements() throws OperationException {
         migration.setOutputType(SchemaMigration.MigrationOutputType.NEW);
 

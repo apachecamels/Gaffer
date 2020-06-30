@@ -17,7 +17,9 @@
 package uk.gov.gchq.gaffer.proxystore;
 
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.rules.TemporaryFolder;
 
+import uk.gov.gchq.gaffer.commonutil.CommonTestConstants;
 import uk.gov.gchq.gaffer.commonutil.StreamUtil;
 import uk.gov.gchq.gaffer.rest.RestApiTestClient;
 import uk.gov.gchq.gaffer.rest.service.v2.RestApiV2TestClient;
@@ -40,9 +42,10 @@ import java.io.IOException;
  * SingleUseMapProxyStore.cleanUp to stop the server and delete the temporary folder.
  */
 public abstract class SingleUseProxyStore extends ProxyStore {
-    @TempDir
-    public File testFolder;
 
+//    @TempDir
+//    File testFolder;
+    public static final TemporaryFolder TEST_FOLDER = new TemporaryFolder(CommonTestConstants.TMP_DIRECTORY);
     private static final RestApiTestClient CLIENT = new RestApiV2TestClient();
 
     @Override
@@ -55,7 +58,7 @@ public abstract class SingleUseProxyStore extends ProxyStore {
         final StoreProperties storeProperties = StoreProperties.loadStoreProperties(
                 StreamUtil.openStream(getClass(), getPathToDelegateProperties()));
         try {
-            CLIENT.reinitialiseGraph(testFolder, schema, storeProperties);
+            CLIENT.reinitialiseGraph(TEST_FOLDER, schema, storeProperties);
         } catch (final IOException e) {
             throw new StoreException("Unable to reinitialise delegate graph", e);
         }

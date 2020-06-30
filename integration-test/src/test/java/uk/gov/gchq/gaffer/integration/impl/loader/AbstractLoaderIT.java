@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.integration.impl.loader;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.commonutil.JsonUtil;
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
@@ -55,9 +55,10 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.gov.gchq.gaffer.data.util.ElementUtil.assertElementEquals;
 
 /**
@@ -82,7 +83,7 @@ public abstract class AbstractLoaderIT<T extends Operation> extends AbstractStor
     //                  Add Elements error handling                 //
     //////////////////////////////////////////////////////////////////
     @Test
-    public void shouldThrowExceptionWithUsefulMessageWhenInvalidElementsAdded() throws OperationException {
+    public void shouldThrowExceptionWithUsefulMessageWhenInvalidElementsAdded() {
         // Given
         final AddElements addElements = new AddElements.Builder()
                 .input(new Edge("UnknownGroup", "source", "dest", true))
@@ -96,36 +97,32 @@ public abstract class AbstractLoaderIT<T extends Operation> extends AbstractStor
             if (!msg.contains("Element of type Entity") && null != e.getCause()) {
                 msg = e.getCause().getMessage();
             }
-            assertTrue("Message was: " + msg, msg.contains("UnknownGroup"));
+            assertTrue(msg.contains("UnknownGroup"), "Message was: " + msg);
         }
     }
 
     @Test
-    public void shouldNotThrowExceptionWhenInvalidElementsAddedWithSkipInvalidSetToTrue() throws OperationException {
+    public void shouldNotThrowExceptionWhenInvalidElementsAddedWithSkipInvalidSetToTrue() {
         // Given
         final AddElements addElements = new AddElements.Builder()
                 .input(new Edge("Unknown group", "source", "dest", true))
                 .skipInvalidElements(true)
                 .build();
 
-        // When
-        graph.execute(addElements, getUser());
-
-        // Then - no exceptions
+        // When / Then
+        assertDoesNotThrow(() -> graph.execute(addElements, getUser()));
     }
 
     @Test
-    public void shouldNotThrowExceptionWhenInvalidElementsAddedWithValidateSetToFalse() throws OperationException {
+    public void shouldNotThrowExceptionWhenInvalidElementsAddedWithValidateSetToFalse() {
         // Given
         final AddElements addElements = new AddElements.Builder()
                 .input(new Edge("Unknown group", "source", "dest", true))
                 .validate(false)
                 .build();
 
-        // When
-        graph.execute(addElements, getUser());
-
-        // Then - no exceptions
+        // When / Then
+        assertDoesNotThrow(() -> graph.execute(addElements, getUser()));
     }
 
 
@@ -149,12 +146,10 @@ public abstract class AbstractLoaderIT<T extends Operation> extends AbstractStor
                 .build();
 
         // When
-        final Consumer<Iterable<? extends Element>> resultTest = iter -> {
-            iter.forEach(element -> {
-                assertEquals(1, element.getProperties().size());
-                assertEquals((long) DUPLICATES, element.getProperties().get(TestPropertyNames.COUNT));
-            });
-        };
+        final Consumer<Iterable<? extends Element>> resultTest = iter -> iter.forEach(element -> {
+            assertEquals(1, element.getProperties().size());
+            assertEquals((long) DUPLICATES, element.getProperties().get(TestPropertyNames.COUNT));
+        });
 
         // Then
         getAllElementsWithView(resultTest, view);
@@ -367,17 +362,6 @@ public abstract class AbstractLoaderIT<T extends Operation> extends AbstractStor
         }
     }
 
-    private void getAllElementsWithView(final List<Element> expectedElements, final View view) throws Exception {
-        for (final DirectedType directedType : DirectedType.values()) {
-            try {
-                getAllElements(expectedElements, directedType, view);
-            } catch (final AssertionError e) {
-                throw new AssertionError("GetAllElements failed with parameters: includeEntities=" + view.hasEntities()
-                        + ", includeEdges=" + view.hasEdges() + ", directedType=" + directedType.name(), e);
-            }
-        }
-    }
-
     private void getAllElementsWithView(final Consumer<Iterable<? extends Element>> resultTester, final View view) throws Exception {
         for (final DirectedType directedType : DirectedType.values()) {
             try {
@@ -407,7 +391,7 @@ public abstract class AbstractLoaderIT<T extends Operation> extends AbstractStor
         }
 
         if (!user.getDataAuths().isEmpty()) {
-            final String dataAuths = user.getDataAuths().stream().collect(Collectors.joining(","));
+            final String dataAuths = String.join(",", user.getDataAuths());
             final List<Element> nonVisibleElements = expectedElements.stream()
                     .filter(e -> {
                         final String visibility = (String) e.getProperties().get(TestPropertyNames.VISIBILITY);

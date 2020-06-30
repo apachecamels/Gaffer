@@ -15,7 +15,14 @@
  */
 package uk.gov.gchq.gaffer.federatedstore;
 
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.File;
+
 public class SingleUseFederatedStore extends uk.gov.gchq.gaffer.proxystore.SingleUseProxyStore {
+
+    @TempDir
+    static File testFolder;
 
     protected String getPathToDelegateProperties() {
         return "properties/singleUseFederatedStore.properties";

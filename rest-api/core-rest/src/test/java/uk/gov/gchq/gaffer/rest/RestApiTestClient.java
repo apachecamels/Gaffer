@@ -16,6 +16,9 @@
 
 package uk.gov.gchq.gaffer.rest;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.servlet.ServletRegistration;
@@ -34,10 +37,6 @@ import uk.gov.gchq.gaffer.operation.impl.add.AddElements;
 import uk.gov.gchq.gaffer.rest.factory.DefaultGraphFactory;
 import uk.gov.gchq.gaffer.store.StoreProperties;
 import uk.gov.gchq.gaffer.store.schema.Schema;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Response;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -104,15 +103,14 @@ public abstract class RestApiTestClient {
                     .store(out, "This is an optional header comment string");
         }
 
-        // set properties for REST service
         setSystemProperties(testFolder.getRoot() + "/store.properties", testFolder.getRoot() + "/schema.json");
         reinitialiseGraph();
     }
 
     public void reinitialiseGraph(final File tempDirectory, final Schema schema, final StoreProperties storeProperties) throws IOException {
-        FileUtils.writeByteArrayToFile(new File(tempDirectory, "/schema.json"), schema.toJson(true));
+        FileUtils.writeByteArrayToFile(new File(tempDirectory, "schema.json"), schema.toJson(true));
 
-        try (OutputStream out = new FileOutputStream(new File(tempDirectory, "/store.properties"))) {
+        try (OutputStream out = new FileOutputStream(new File(tempDirectory, "store.properties"))) {
             storeProperties.getProperties()
                     .store(out, "This is an optional header comment string");
         }

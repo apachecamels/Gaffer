@@ -17,9 +17,12 @@ package uk.gov.gchq.gaffer.integration;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.junit.AfterClass;
-import org.junit.Before;
+//import org.junit.AfterClass;
+//import org.junit.Before;
 import org.junit.Rule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.rules.TestName;
 
 import uk.gov.gchq.gaffer.commonutil.CollectionUtil;
@@ -127,9 +130,6 @@ public abstract class AbstractStoreIT {
     protected static Graph graph;
     protected User user = new User();
 
-    @Rule
-    public TestName name = new TestName();
-
     private static Map<? extends Class<? extends AbstractStoreIT>, String> skippedTests;
     private static Map<? extends Class<? extends AbstractStoreIT>, Map<String, String>> skipTestMethods;
     protected String originalMethodName;
@@ -170,9 +170,9 @@ public abstract class AbstractStoreIT {
      *
      * @throws Exception should never be thrown
      */
-    @Before
-    public void setup() throws Exception {
-        initialise();
+    @BeforeEach
+    public void setup(TestInfo testInfo) throws Exception {
+        initialise(testInfo);
         validateTest();
         createGraph();
         _setup();
@@ -183,21 +183,19 @@ public abstract class AbstractStoreIT {
         // Override if required;
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @AfterAll
+    public static void tearDownAll() {
         graph = null;
     }
 
-    protected void initialise() throws Exception {
+    protected void initialise(final TestInfo testInfo) throws Exception {
         entities = createEntities();
         duplicateEntities = duplicate(entities.values());
 
         edges = createEdges();
         duplicateEdges = duplicate(edges.values());
 
-        originalMethodName = name.getMethodName().endsWith("]")
-                ? name.getMethodName().substring(0, name.getMethodName().indexOf("["))
-                : name.getMethodName();
+        originalMethodName = testInfo.getTestMethod().get().getName();
 
         method = this.getClass().getMethod(originalMethodName);
     }

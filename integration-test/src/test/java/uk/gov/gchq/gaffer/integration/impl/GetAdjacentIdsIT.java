@@ -18,7 +18,7 @@ package uk.gov.gchq.gaffer.integration.impl;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.commonutil.iterable.CloseableIterable;
 import uk.gov.gchq.gaffer.data.element.id.DirectedType;
@@ -35,9 +35,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class GetAdjacentIdsIT extends AbstractStoreIT {
+
     private static final List<String> SEEDS = Arrays.asList(
             SOURCE_1, DEST_2, SOURCE_3, DEST_3,
             SOURCE_DIR_1, DEST_DIR_2, SOURCE_DIR_3, DEST_DIR_3,
@@ -121,10 +122,9 @@ public class GetAdjacentIdsIT extends AbstractStoreIT {
         }
         Collections.sort(resultSeeds);
         Collections.sort(expectedResultSeeds);
-        assertArrayEquals("InOut=" + inOutType + ", directedType=" + directedType
+        assertArrayEquals(expectedResultSeeds.toArray(), resultSeeds.toArray(),
+                "InOut=" + inOutType + ", directedType=" + directedType
                         + ".\nExpected: \n  " + StringUtils.join(expectedResultSeeds, "\n  ")
-                        + " \nbut got: \n  " + StringUtils.join(resultSeeds, "\n  "),
-                expectedResultSeeds.toArray(),
-                resultSeeds.toArray());
+                        + " \nbut got: \n  " + StringUtils.join(resultSeeds, "\n  "));
     }
 }

@@ -17,7 +17,7 @@ package uk.gov.gchq.gaffer.integration.impl;
 
 import com.google.common.collect.Lists;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.commonutil.CollectionUtil;
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
@@ -45,11 +45,12 @@ import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GeneratorsIT extends AbstractStoreIT {
+
     private static final String NEW_SOURCE = "newSource";
     private static final String NEW_DEST = "newDest";
     private static final String NEW_VERTEX = "newVertex";
@@ -80,8 +81,7 @@ public class GeneratorsIT extends AbstractStoreIT {
         // Then
         assertNotNull(results);
         assertEquals(2, results.size());
-        assertThat(results, IsCollectionContaining.hasItems(
-                entityDomainObject, edgeDomainObject));
+        assertThat(results, IsCollectionContaining.hasItems(entityDomainObject, edgeDomainObject));
     }
 
     @Test

@@ -16,7 +16,7 @@
 package uk.gov.gchq.gaffer.integration.impl;
 
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.gov.gchq.gaffer.commonutil.TestGroups;
 import uk.gov.gchq.gaffer.commonutil.TestPropertyNames;
@@ -40,8 +40,8 @@ import uk.gov.gchq.gaffer.operation.impl.get.GetElements;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ExportIT extends AbstractStoreIT {
 
@@ -82,7 +82,7 @@ public class ExportIT extends AbstractStoreIT {
 
     @Test
     public void shouldExportResultsToGafferCache() throws OperationException {
-        assumeTrue("Gaffer result cache has not been enabled for this store.", graph.isSupported(ExportToGafferResultCache.class));
+        assumeTrue(graph.isSupported(ExportToGafferResultCache.class), "Gaffer result cache has not been enabled for this store.");
 
         // Given
         final View edgesView = new View.Builder()
